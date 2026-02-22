@@ -1,0 +1,31 @@
+# Audio data (large files, not needed for version control)
+audio_data/
+
+# Python generated files
+__pycache__/
+*.pyc
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Generated audio files
+*.wav
+ode_to_joy_*.wav
+
+# Generated dashboard images
+dashboard_*.png
+
+# Excel and Word documents (optional - uncomment if you want to track them)
+# SRIP Experimental Procedure.docx
+# SRIP Experimental Procedure.xlsx
+
+# Classification proposal (already tracked)
+# beatbox_classification_proposal.md
