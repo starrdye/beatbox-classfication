@@ -23,9 +23,11 @@ ode_to_joy_*.wav
 # Generated dashboard images
 dashboard_*.png
 
-# Excel and Word documents (optional - uncomment if you want to track them)
-# SRIP Experimental Procedure.docx
-# SRIP Experimental Procedure.xlsx
+# Image files generated for the report
+*.png
 
-# Classification proposal (already tracked)
-# beatbox_classification_proposal.md
+# Hidden AI output folders
+.claude/
+
+# Archived unrelated and sensitive project files
+archive/
