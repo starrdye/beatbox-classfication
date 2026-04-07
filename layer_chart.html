@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beatbox CNN Architecture — Interactive Layer Chart</title>
+  <meta name="description" content="Interactive diagram of the CNN architecture used to classify beatbox sounds in the Spectral Fingerprints study." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #0d1117;
+      --surface:  #161b22;
+      --surface2: #21262d;
+      --border:   #30363d;
+      --accent:   #58a6ff;
+      --accent2:  #3fb950;
+      --warn:     #d29922;
+      --text:     #e6edf3;
+      --muted:    #8b949e;
+      --b-color:  #a371f7;
+      --k-color:  #f85149;
+      --nu-color: #3fb950;
+      --psh-color:#58a6ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-title { font-weight: 700; font-size: 1rem; color: var(--accent); }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 3rem 2rem 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .hero p {
+      margin-top: 0.75rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .badge-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.85rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── ARCH COLUMN ── */
+    .arch-col { display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+    /* ── LAYER CARDS ── */
+    .layer-card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.4rem;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+      position: relative;
+    }
+    .layer-card:hover,
+    .layer-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+      transform: translateX(2px);
+    }
+    .layer-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .layer-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .layer-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .layer-shape {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-top: 0.15rem;
+    }
+    .layer-short {
+      margin-top: 0.6rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Connector arrow */
+    .arrow {
+      width: 2px;
+      height: 32px;
+      background: linear-gradient(to bottom, var(--border), var(--accent));
+      margin: 0 auto;
+      position: relative;
+    }
+    .arrow::after {
+      content: '▼';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: var(--accent);
+    }
+
+    /* Output pills */
+    .output-row {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .output-pill {
+      padding: 0.4rem 1.1rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.03em;
+      cursor: default;
+      transition: transform 0.15s;
+    }
+    .output-pill:hover { transform: scale(1.08); }
+    .pill-b   { background: rgba(163,113,247,0.18); color: var(--b-color);   border: 1.5px solid var(--b-color); }
+    .pill-k   { background: rgba(248, 81, 73,0.15);  color: var(--k-color);   border: 1.5px solid var(--k-color); }
+    .pill-nu  { background: rgba(63,185,80,0.15);   color: var(--nu-color);  border: 1.5px solid var(--nu-color); }
+    .pill-psh { background: rgba(88,166,255,0.13);  color: var(--psh-color); border: 1.5px solid var(--psh-color); }
+
+    /* ── SIDE PANEL ── */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Info card */
+    .info-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      min-height: 280px;
+      transition: border-color 0.3s;
+    }
+    .info-card.highlighted { border-color: var(--accent); }
+    .info-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .info-layer-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+    .info-shapes {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .shape-tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.2rem 0.6rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text);
+    }
+    .shape-arrow { color: var(--muted); font-size: 0.85rem; }
+    .info-desc {
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .info-discriminates {
+      margin-top: 0.85rem;
+      padding: 0.65rem 0.85rem;
+      background: rgba(88,166,255,0.07);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .info-discriminates span { color: var(--text); font-weight: 500; }
+
+    /* Mel spectrogram legend */
+    .spec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .spec-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+    }
+    .spec-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+    .spec-bar {
+      height: 48px;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .spec-desc {
+      margin-top: 0.35rem;
+      font-size: 0.69rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* Accuracy table card */
+    .acc-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      padding: 0.35rem 0.4rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      font-size: 0.8rem;
+      padding: 0.4rem 0.4rem;
+      border-bottom: 1px solid var(--surface2);
+    }
+    .model-name { font-weight: 600; color: var(--text); }
+    .acc-high { color: var(--accent2); font-weight: 700; }
+    .acc-mid  { color: var(--warn); }
+    .acc-low  { color: var(--k-color); }
+
+    /* ── Progress bar ── */
+    .bar-wrap { background: var(--surface2); border-radius: 4px; height: 5px; margin-top: 3px; }
+    .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+
+    /* ── Hint text ── */
+    .hint { text-align: center; font-size: 0.78rem; color: var(--muted); margin-top: 1.5rem; padding-bottom: 3rem; }
+    .hint span { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-title">Spectral Fingerprints — Beatbox CNN</div>
+  <div class="nav-links">
+    <a href="#arch">Architecture</a>
+    <a href="#results">Results</a>
+    <a href="report.md">Report</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Interactive CNN Architecture<br>for Beatbox Sound Classification</h1>
+  <p>Hover or click any layer to explore tensor shapes, what each operation learns, and which sounds it helps discriminate. Best model: 94.2% LOPO accuracy.</p>
+  <div class="badge-row">
+    <span class="badge">PyTorch 2.x</span>
+    <span class="badge">64×128 Mel-Spec</span>
+    <span class="badge">LOPO-CV · 9 folds</span>
+    <span class="badge">n=86 samples</span>
+    <span class="badge">4 classes</span>
+  </div>
+</div>
+
+<div class="main-grid" id="arch">
+
+  <!-- ── LEFT: Architecture ── -->
+  <div class="arch-col">
+
+    <!-- INPUT -->
+    <div class="layer-card" id="lyr-input" onclick="select('input')" onmouseenter="select('input')">
+      <div class="layer-header">
+        <div class="layer-icon" style="background:rgba(88,166,255,0.15)">🎵</div>
+        <div>
+          <div class="layer-name">Input — Log Mel-Spectrogram</div>
+          <div class="layer-shape">Shape: (1 × 64 × 128)</div>
+        </div>
+      </div>
+      <div class="layer-short">Single-channel 2D time-frequency image. 64 Mel bins × 128 time frames ≈ 3 s of audio at sr=22,050 Hz.</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <!-- BLOCK 1 -->
+    <div class="layer-card" id="lyr-block1" onclick="select('block1')" onmouseenter="select('block1')">
+      <div class="layer-header">
+        <div class="layer-icon" style="background:rgba(163,113,247,0.15)">🔲</div>
+        <div>
+          <div class="layer-name">Conv Block 1</div>
+          <div class="layer-shape">Conv2D(1→16, 3×3) → BatchNorm → ReLU → MaxPool(2×2)</div>
+        </div>
+      </div>
+      <div class="layer-short">Applies 16 learnable 3×3 filters. MaxPool halves frequency and time dimensions. Output: (16 × 32 × 64).</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <!-- BLOCK 2 -->
+    <div class="layer-card" id="lyr-block2" onclick="select('block2')" onmouseenter="select('block2')">
+      <div class="layer-header">
+        <div class="layer-icon" style="background:rgba(248,81,73,0.12)">🔲</div>
+        <div>
+          <div class="layer-name">Conv Block 2</div>
+          <div class="layer-shape">Conv2D(16→32, 3×3) → BatchNorm → ReLU → MaxPool(2×2)</div>
+        </div>
+      </div>
+      <div class="layer-short">Doubles the feature maps to 32. Learns combinations of frequency and time patterns from Block 1. Output: (32 × 16 × 32).</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <!-- BLOCK 3 -->
+    <div class="layer-card" id="lyr-block3" onclick="select('block3')" onmouseenter="select('block3')">
+      <div class="layer-header">
+        <div class="layer-icon" style="background:rgba(63,185,80,0.12)">🔲</div>
+        <div>
+          <div class="layer-name">Conv Block 3</div>
+          <div class="layer-shape">Conv2D(32→64, 3×3) → BatchNorm → ReLU → AdaptiveAvgPool(4×4)</div>
+        </div>
+      </div>
+      <div class="layer-short">64 feature maps, pooled to fixed 4×4 grid regardless of input size. Output: (64 × 4 × 4) = 1,024 values.</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <!-- FLATTEN + DENSE -->
+    <div class="layer-card" id="lyr-head" onclick="select('head')" onmouseenter="select('head')">
+      <div class="layer-header">
+        <div class="layer-icon" style="background:rgba(210,153,34,0.15)">⠿</div>
+        <div>
+          <div class="layer-name">Classifier Head</div>
+          <div class="layer-shape">Flatten → Linear(1024→128) → ReLU → Dropout(0.5)</div>
+        </div>
+      </div>
+      <div class="layer-short">Flattens 1,024 values, projects to 128-dim representation. Dropout randomly zeroes 50% of neurons per training step to prevent memorisation.</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <!-- OUTPUT -->
+    <div class="layer-card" id="lyr-output" onclick="select('output')" onmouseenter="select('output')">
+      <div class="layer-header">
+        <div class="layer-icon" style="background:rgba(63,185,80,0.15)">✓</div>
+        <div>
+          <div class="layer-name">Output — Softmax (4 classes)</div>
+          <div class="layer-shape">Linear(128→4) → Softmax</div>
+        </div>
+      </div>
+      <div class="layer-short">Converts 4 raw scores to a probability distribution summing to 1. Predicted class = highest probability.</div>
+    </div>
+
+    <!-- Sound output pills -->
+    <div class="output-row" id="results">
+      <div class="output-pill pill-b">b — Bass Kick</div>
+      <div class="output-pill pill-k">k — K-Snare</div>
+      <div class="output-pill pill-nu">nu — Neutral Hum</div>
+      <div class="output-pill pill-psh">psh — Push Hi-hat</div>
+    </div>
+
+  </div><!-- /arch-col -->
+
+  <!-- ── RIGHT: Side Panel ── -->
+  <div class="side-panel">
+
+    <!-- Dynamic info card -->
+    <div class="info-card" id="info-card">
+      <div class="info-title">Layer Details</div>
+      <div class="info-layer-name" id="info-name">← Select a layer</div>
+      <div class="info-shapes" id="info-shapes"></div>
+      <div class="info-desc" id="info-desc">Click or hover any layer on the left to see its tensor shapes, what it computes, and which beatbox sound distinctions it contributes to.</div>
+      <div class="info-discriminates" id="info-disc" style="display:none"><span>Discriminates:</span> —</div>
+    </div>
+
+    <!-- Mel-spectrogram patterns legend -->
+    <div class="acc-card">
+      <div class="info-title" style="margin-bottom:0.7rem">Typical Mel-Spectrogram Patterns</div>
+      <div class="spec-grid">
+        <div class="spec-card">
+          <div class="spec-label" style="color:var(--b-color)">b — Bass Kick</div>
+          <div class="spec-bar" style="background: linear-gradient(to top, #a371f7 0%, rgba(163,113,247,0.3) 40%, transparent 100%)"></div>
+          <div class="spec-desc">Bright vertical stripe concentrated in <em>low</em> Mel bins. Fast onset, fast decay.</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-label" style="color:var(--k-color)">k — K-Snare</div>
+          <div class="spec-bar" style="background: linear-gradient(to top, rgba(248,81,73,0.8) 0%, rgba(248,81,73,0.6) 60%, rgba(248,81,73,0.3) 100%)"></div>
+          <div class="spec-desc">Broadband vertical transient across <em>all</em> frequencies. Near-instantaneous.</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-label" style="color:var(--nu-color)">nu — Hum</div>
+          <div class="spec-bar" style="background: linear-gradient(to top, transparent 60%, rgba(63,185,80,0.7) 65%, transparent 75%)"></div>
+          <div class="spec-desc">Stable, narrow horizontal band. Low ZCR, stable MFCCs over time.</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-label" style="color:var(--psh-color)">psh — Hi-hat</div>
+          <div class="spec-bar" style="background: linear-gradient(to top, transparent 55%, rgba(88,166,255,0.3) 60%, rgba(88,166,255,0.7) 80%, rgba(88,166,255,0.9) 100%)"></div>
+          <div class="spec-desc">Sustained high-frequency noise band. Gradual decay, high ZCR throughout.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accuracy table -->
+    <div class="acc-card">
+      <div class="info-title" style="margin-bottom:0.7rem">LOPO-CV Accuracy Comparison</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Overall</th>
+            <th>b</th>
+            <th>k</th>
+            <th>nu</th>
+            <th>psh</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-name" style="color:var(--muted)">Phase 1</td>
+            <td style="color:var(--muted)">76.1%</td>
+            <td class="acc-low">38.1%</td>
+            <td class="acc-high">86.4%</td>
+            <td class="acc-high">90.0%</td>
+            <td class="acc-high">87.5%</td>
+          </tr>
+          <tr>
+            <td class="model-name">SVM</td>
+            <td class="acc-mid">82.6%</td>
+            <td class="acc-high">90.0%</td>
+            <td class="acc-low">59.1%</td>
+            <td class="acc-high">100%</td>
+            <td class="acc-mid">83.3%</td>
+          </tr>
+          <tr>
+            <td class="model-name">Rand. Forest</td>
+            <td class="acc-mid">83.7%</td>
+            <td class="acc-high">90.0%</td>
+            <td class="acc-mid">72.7%</td>
+            <td class="acc-high">90.0%</td>
+            <td class="acc-mid">83.3%</td>
+          </tr>
+          <tr style="background:rgba(88,166,255,0.06)">
+            <td class="model-name" style="color:var(--accent)">CNN ★</td>
+            <td class="acc-high">94.2%</td>
+            <td class="acc-high">90.0%</td>
+            <td class="acc-high">95.5%</td>
+            <td class="acc-high">100%</td>
+            <td class="acc-high">91.7%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:0.9rem">
+        <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.4rem">CNN vs Phase 1 overall improvement</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:94.2%;background:var(--accent2)"></div></div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem">Phase 1 baseline</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:76.1%;background:var(--muted)"></div></div>
+      </div>
+    </div>
+
+  </div><!-- /side-panel -->
+
+</div><!-- /main-grid -->
+
+<div class="hint">
+  <span>↑ Click or hover</span> any layer block to see detailed explanations &nbsp;·&nbsp;
+  Inspired by <a href="https://biboamy.github.io/instrument-demo/index.html" style="color:var(--accent)">biboamy.github.io/instrument-demo</a>
+</div>
+
+<script>
+  const LAYER_DATA = {
+    input: {
+      name: 'Input — Log Mel-Spectrogram',
+      in: '1 × 64 × 128',
+      out: '1 × 64 × 128',
+      desc: `Each audio clip is converted to a log Mel-spectrogram: a 2D time-frequency image with 64 Mel bins (y-axis) × 128 time frames (x-axis ≈ 3 s). Pixel intensity ∝ decibels (dB).
+
+Mel filterbank maps linear frequency → perceptual Mel scale mimicking the ear's logarithmic sensitivity. Log compression then compresses the dynamic range of energy values.
+
+All clips are zero-padded or truncated to exactly 128 frames, ensuring a fixed input size for the CNN.`,
+      disc: `Visually: <span>b</span> = low-frequency stripe; <span>k</span> = broadband vertical flash; <span>nu</span> = narrow stable band; <span>psh</span> = sustained high-frequency noise.`
+    },
+    block1: {
+      name: 'Conv Block 1',
+      in:  '1 × 64 × 128',
+      out: '16 × 32 × 64',
+      desc: `16 learnable 3×3 convolutional filters slide across the spectrogram. Each filter learns to activate when it sees a specific local time-frequency pattern — a vertical edge (onset), a horizontal band (sustained tone), a region of high-frequency noise (fricative).
+
+BatchNorm2D normalises outputs to zero mean / unit variance — stabilises training and reduces dependence on weight initialisation.
+
+MaxPool(2×2) halves both frequency and time dimensions, making the representation smaller and translation-invariant: a pattern shifted by 1–2 frames or bins is still detected.`,
+      disc: `Detects <span>low-level edges</span>: the sharp onset of k and b, the sustained frequency bands of nu and psh.`
+    },
+    block2: {
+      name: 'Conv Block 2',
+      in:  '16 × 32 × 64',
+      out: '32 × 16 × 32',
+      desc: `32 filters, each looking at a 3×3 region of the 16-channel feature maps from Block 1. Block 2 learns combinations of Block 1 patterns — "a vertical stripe in low frequencies followed by low energy" (b) versus "a vertical stripe spanning all frequencies" (k).
+
+The doubled channel count (16→32) allows the network to track more independent feature combinations simultaneously.
+
+A second MaxPool halves the dimensions again.`,
+      disc: `Begins to distinguish <span>b vs k</span> (low vs broadband onset), <span>psh vs nu</span> (sustained high-freq noise vs stable tone).`
+    },
+    block3: {
+      name: 'Conv Block 3',
+      in:  '32 × 16 × 32',
+      out: '64 × 4 × 4',
+      desc: `64 filters operating on combined spectral and temporal patterns from Block 2. This block learns high-level sound signatures — abstract representations that are unique to each sound class.
+
+AdaptiveAvgPool(4×4) collapses the spatial dimensions to a fixed 4×4 grid by averaging. This makes the output representation robust to small variations in clip length and onset position.
+
+The 64 × 4 × 4 = 1,024 output values form the final acoustic embedding of the sound.`,
+      disc: `High-level signatures that make <span>all 4 classes</span> distinctly separable — includes the formant patterns that MFCCs capture numerically.`
+    },
+    head: {
+      name: 'Classifier Head',
+      in:  '1,024',
+      out: '128',
+      desc: `The 1,024-value embedding is flattened and passed through a fully connected layer projecting to 128 dimensions. This layer combines all spatial features into a class-predictive representation.
+
+ReLU (max(0, x)) introduces non-linearity — without it the entire network collapses to a linear classifier.
+
+Dropout(0.5) randomly zeroes 50% of the 128 neurons during each training step. This prevents the network from memorising specific training examples (critical with only ~73 training samples per LOPO fold) by forcing it to learn redundant, robust representations.`,
+      disc: `Combines all learned patterns into the final 128-dim embedding used for <span>class separation</span>.`
+    },
+    output: {
+      name: 'Output — Softmax (4 classes)',
+      in:  '128',
+      out: '4 probabilities',
+      desc: `A final linear layer maps the 128-dim representation to 4 raw scores (logits). Softmax converts these to probabilities: exp(score_i) / sum(exp(score_j)), ensuring all four outputs are positive and sum to 1.
+
+The predicted class is argmax — the sound type with the highest probability.
+
+Training uses Cross-Entropy Loss, which maximises the log-probability of the correct class. The Adam optimiser with Cosine Annealing LR schedule (start 1e-3 → approach 0 by epoch 80) drives 9 LOPO training runs.`,
+      disc: `<span>b</span> 90.0% · <span>k</span> 95.5% · <span>nu</span> 100% · <span>psh</span> 91.7% — overall LOPO 94.2%.`
+    }
+  };
+
+  let current = null;
+
+  function select(id) {
+    if (current === id) return;
+    current = id;
+
+    // Update card highlights
+    document.querySelectorAll('.layer-card').forEach(c => c.classList.remove('active'));
+    const el = document.getElementById('lyr-' + id);
+    if (el) el.classList.add('active');
+
+    const d = LAYER_DATA[id];
+    if (!d) return;
+
+    document.getElementById('info-name').textContent  = d.name;
+    document.getElementById('info-desc').textContent  = d.desc;
+
+    const shapes = document.getElementById('info-shapes');
+    shapes.innerHTML = `
+      <span class="shape-tag">${d.in}</span>
+      <span class="shape-arrow">→</span>
+      <span class="shape-tag">${d.out}</span>
+    `;
+
+    const disc = document.getElementById('info-disc');
+    if (d.disc) {
+      disc.style.display = 'block';
+      disc.innerHTML = '<span>Discriminates:</span> ' + d.disc;
+    } else {
+      disc.style.display = 'none';
+    }
+
+    document.getElementById('info-card').classList.add('highlighted');
+  }
+</script>
+</body>
+</html>
