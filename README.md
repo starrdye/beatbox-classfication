@@ -10,24 +10,17 @@ The codebase is organized into several phases of analysis, each represented by c
 
 The `audio_data` directory is the central location for all audio files used in this project. It is structured to support both participant recordings and extracted drum hits for comparison.
 
-```mermaid
-graph TD
-    Root[audio_data/] --> Participants[Participant Directories 1-11/]
-    Root --> Drums[drums/]
-    
-    subgraph Participants_Folder [Participant Structure]
-        P1[1/] --> Ph1[Phase 1/]
-        P1 --> Ph2[Phase 2/]
-        P1 --> Ph3[Phase 3/]
-        Ph1 --> W1[Individual Sound Clips e.g., P1-b-01.wav]
-    end
-    
-    subgraph Drums_Folder [Drum Hits Structure]
-        Drums --> BD[bd/ Bass Drum]
-        Drums --> CHH[chh/ Closed Hi-Hat]
-        Drums --> SD[sd/ Snare Drum]
-        BD --> DW1[Extracted WAV files]
-    end
+```text
+audio_data/
+├── 1/                     # Participant 1
+│   ├── Phase 1/           # Individual sound clips (e.g., P1-b-01.wav)
+│   ├── Phase 2/           # Patterns and full recordings
+│   └── Phase 3/           # Realism analysis sounds
+├── 2/                     ... (same structure for participants 2-11)
+└── drums/                 # Professional drum hits (from ENST dataset)
+    ├── bd/                # Bass Drum
+    ├── chh/               # Closed Hi-Hat
+    └── sd/                # Snare Drum
 ```
 
 ### Participant Data
@@ -59,15 +52,7 @@ xychart-beta
 <br>
 
 <p align="center">
-  <img src="public/phase2_confusion_cnn.png" width="45%" title="CNN Confusion Matrix">
-  &nbsp;&nbsp;
-  <img src="public/phase2_per_sound_comparison.png" width="45%" title="Per-Sound Comparison">
-</p>
-
-<p align="center">
-  <img src="public/phase2_feature_importance.png" width="45%" title="Random Forest Feature Importance">
-  &nbsp;&nbsp;
-  <img src="public/phase2_lopo_per_participant.png" width="45%" title="Per-Participant LOPO Accuracy">
+  <img src="public/poster.png" width="95%" title="Beatbox Classification CNN Findings Poster">
 </p>
 
 ### CNN Architecture Structure
