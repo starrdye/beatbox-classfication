@@ -322,18 +322,6 @@ For RQ2 — which features are most discriminative and where do beatbox sounds d
 
 ---
 
-## 8. Conclusion
-
-This study addressed two research questions about the acoustic nature of human beatboxing. For **RQ1** — can machine learning reliably classify beatbox sounds across individuals? — the answer is a qualified yes: the CNN on mel-spectrograms achieves 94.2% accuracy under LOPO cross-validation, reducing errors from 21 to 5. The qualification is that remaining errors are systematically individual-specific, not random, implying that individual vocal production style remains the binding constraint.
-
-For **RQ2** — what features are most discriminative and where do beatbox sounds diverge from instruments? — Phase 2 shows that MFCCs (especially low-order coefficients encoding broad formant structure), attack time, and decay rate are the most predictive features. The largest acoustic gap identified is in the `b`/`k` dimension: these two sounds share temporal envelope characteristics but differ fundamentally in their formant patterns, corresponding to the physiological distinction between labial and velar vocal tract configurations.
-
-The progression from 76.1% (Phase 1, 3 features, K-means) to 94.2% (Phase 2, mel-spectrogram, CNN) demonstrates that the choice of input representation is the most consequential methodological decision in audio classification, outweighing model architecture when the dataset is small. The LOPO validation framework established here is the appropriate scientific standard for any beatbox classifier intended to generalise to new users.
-
-Recommended next steps are: (1) expanding the dataset with more participants including professional beatboxers; (2) collecting acoustic drum and TR-808 samples as ground-truth instrument references; (3) computing the Acoustic Realism Score via cosine similarity in MFCC space between beatbox and instrument clusters; and (4) investigating Participant 5's production technique to determine whether their anomalous acoustic profile is a recording artefact or a genuine stylistic outlier.
-
----
-
 ## References
 
 1. Martanto, J., & Kartowisastro, I. H. (2025). Beatbox Classification to Distinguish User Experiences Using Machine Learning Approaches. *Journal of Computer Science*, 21(4), 961–970. https://thescipub.com/pdf/jcssp.2025.961.970.pdf
@@ -362,9 +350,7 @@ Recommended next steps are: (1) expanding the dataset with more participants inc
 
 ---
 
-## Appendix A — Original Research Proposal
-
-*(Full text reproduced from `APPENDIX A.docx` / `research_proposal.md`)*
+## Appendix A — Original Research Proposal (This project is a NUS independent student research project)
 
 **1) Title of ISC**
 Spectral Fingerprints: Classifying and Comparing Human Beatbox Sounds to Mechanical Percussion
@@ -378,27 +364,6 @@ Current research often asks, "Can a computer recognise this sound as a kick?" bu
 This project aims to bridge that gap by investigating the "acoustic realism" of beatboxing. The primary objective is to use digital signal processing (DSP) and machine learning techniques to not only classify these three fundamental sounds but to measure the specific acoustic parameters that create the "illusion" of a real drum, and to identify the specific spectral divergences where that illusion breaks.
 
 *Method:* The research will be conducted in three distinct phases using Python libraries such as Librosa and Scikit-learn: (1) Data Collection; (2) Feature Extraction; (3) Analysis (Classification + Comparison/Realism Score).
-
-**3) Reading List**
-(see References section above)
-
-**4) Schedule/Plan of Work**
-- Weeks 1–3: Literature review and finalisation of methodology
-- Weeks 4–5: Data collection (recording beatbox samples and sourcing drum datasets)
-- Weeks 6–7: Data preprocessing (slicing, cleaning, and spectrogram generation)
-- Weeks 8–9: Model training (classification) and executing comparative analysis scripts
-- Weeks 10–11: Analysing results and drafting the final report
-- Week 12: Final review with supervisor and report refinement
-- Week 13: Submission of Final Report and Presentation
-
-**5) Contact Hours:** Weekly Consultation: Tuesdays, 6:00 PM – 8:00 PM
-
-**6) Mode of Assessment**
-- Consultation with Supervisor: 20%
-- Literature Review: 10%
-- Draft Essay/Progress Report: 20%
-- Final Report (4,000–5,000 words): 40%
-- Presentation: 10%
 
 ---
 
@@ -471,13 +436,52 @@ The labelling of beatbox sounds is inherently somewhat subjective. The `b` categ
 
 ---
 
-## Appendix C — Interactive Layer Chart
+## Appendix C — CNN Network Architecture & Interactive Layer Chart
+
+The underlying CNN classification model learns hierarchical spatial patterns through three convolutional blocks before passing flattened features into a classifier head.
+
+```mermaid
+graph TD
+    Input["Input: Log Mel-Spectrogram (1, 64, 128)"] --> Block1
+    
+    subgraph Block1["Conv2D Block 1"]
+        C1["Conv2d (1 to 16, 3x3)"] --> B1["BatchNorm2d"]
+        B1 --> R1["ReLU"]
+        R1 --> P1["MaxPool2d (2x2)"]
+    end
+    
+    Block1 --> Block2
+    
+    subgraph Block2["Conv2D Block 2"]
+        C2["Conv2d (16 to 32, 3x3)"] --> B2["BatchNorm2d"]
+        B2 --> R2["ReLU"]
+        R2 --> P2["MaxPool2d (2x2)"]
+    end
+    
+    Block2 --> Block3
+    
+    subgraph Block3["Conv2D Block 3"]
+        C3["Conv2d (32 to 64, 3x3)"] --> B3["BatchNorm2d"]
+        B3 --> R3["ReLU"]
+        R3 --> P3["AdaptiveAvgPool2d (4x4)"]
+    end
+    
+    Block3 --> Head
+    
+    subgraph Head["Classifier Head"]
+        F1["Flatten"] --> L1["Linear (1024 to 128)"]
+        L1 --> RH1["ReLU"]
+        RH1 --> D1["Dropout (0.5)"]
+        D1 --> L2["Linear (128 to 4)"]
+    end
+    
+    Head --> Output["Output: Softmax (4 Classes)"]
+```
 
 An interactive diagram of the Phase 2 CNN architecture is provided at: **[link to be added after deployment]**
 
 The page presents each layer in the CNN as a hoverable block. Hovering over any block displays the input and output tensor shapes, a plain-language description of what the layer computes, and which sound-type distinctions the layer contributes to. Example mel-spectrograms for each of the four sound types are shown at the input node.
 
-The design is inspired by the instrument recognition demo at [biboamy.github.io/instrument-demo](https://biboamy.github.io/instrument-demo/index.html) and the layer visualisation approach used by Chou et al. (IJCAI, 2018).
 
 The chart is implemented in plain HTML and JavaScript (`layer_chart.html` in the project root) and does not require any backend — it can be opened directly in a browser or hosted as a static page.
 
