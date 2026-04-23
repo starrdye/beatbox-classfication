@@ -42,3 +42,10 @@ ENST-drums-dataset-master/
 # Phase 3 files (not included at this moment)
 *phase3*
 audio_data/*/Phase 3/
+extract_drum_hits.py
+
+# Documents and planning
+report_plan.md
+report_student.docx
+Xingye_ISC_report.docx
+~$report.docx

@@ -6,6 +6,16 @@ This project focuses on the classification and analysis of beatbox sounds.
 
 The codebase is organized into several phases of analysis, each represented by corresponding Python scripts and generated reports.
 
+## 📝 Research Report
+
+For a detailed analysis of the methodology, results, and discussion, please refer to the full [Research Report](report.md).
+
+## 🚀 Key Findings
+
+- **CNN Superiority**: The Convolutional Neural Network (CNN) on Mel-Spectrograms achieved an overall accuracy of **94.2%**, significantly outperforming baseline models.
+- **Feature Significance**: MFCC features proved decisive in resolving acoustic ambiguities between bass kicks `{b}` and snare clicks `{k}`.
+- **LOPO Generalization**: Leave-One-Participant-Out (LOPO) cross-validation confirmed that the model generalizes well across different individuals, despite variations in vocal production.
+
 ## Audio Data Structure
 
 The `audio_data` directory is the central location for all audio files used in this project. It is structured to support participant recordings across different phases.
