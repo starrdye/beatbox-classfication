@@ -38,28 +38,41 @@ graph TD
 ### Drum Data
 - **drums/**: Contains professional drum hits extracted from the ENST dataset, categorized into `bd` (bass drum), `chh` (closed hi-hat), and `sd` (snare drum).
 
+---
+
+<div align="center">
+
 ## 📊 Project Findings and AI Layer Structure Poster
 
 ### Model Performance Findings
 
-The deep learning model demonstrated a significant accuracy improvement over machine learning and unsupervised clustering.
-
-![Per-Participant Accuracy Comparison](public/phase2_lopo_per_participant.png)
-![CNN Confusion Matrix](public/phase2_confusion_cnn.png)
-![Per-Sound Comparison](public/phase2_per_sound_comparison.png)
-![Feature Importance](public/phase2_feature_importance.png)
+The Convolutional Neural Network (CNN) demonstrated a significant accuracy improvement over traditional machine learning and unsupervised clustering.
 
 ```mermaid
-pie title "Overall Classification Accuracy by Model (%)"
-    "Phase 1 K-Means" : 76.1
-    "Phase 2 SVM" : 82.6
-    "Phase 2 Random Forest" : 83.7
-    "Phase 2 CNN" : 94.2
+xychart-beta
+    title "Overall Classification Accuracy by Model (%)"
+    x-axis ["Phase 1 K-Means", "Phase 2 SVM", "Phase 2 Random Forest", "Phase 2 CNN"]
+    y-axis "Accuracy %" 0 --> 100
+    bar [76.1, 82.6, 83.7, 94.2]
 ```
+
+<br>
+
+<p align="center">
+  <img src="public/phase2_confusion_cnn.png" width="45%" title="CNN Confusion Matrix">
+  &nbsp;&nbsp;
+  <img src="public/phase2_per_sound_comparison.png" width="45%" title="Per-Sound Comparison">
+</p>
+
+<p align="center">
+  <img src="public/phase2_feature_importance.png" width="45%" title="Random Forest Feature Importance">
+  &nbsp;&nbsp;
+  <img src="public/phase2_lopo_per_participant.png" width="45%" title="Per-Participant LOPO Accuracy">
+</p>
 
 ### CNN Architecture Structure
 
-The best-performing model relies on processing log mel-spectrograms through three spatial convolution blocks.
+The best-performing model extracts Mel-Spectrogram features through three connected spatial convolution blocks.
 
 ```mermaid
 graph TD
@@ -68,7 +81,14 @@ graph TD
     C --> D{"Conv2D Block 3"}
     D --> E("Classifier Head<br>Flatten & Dense layers")
     E --> F(("Output: 4 Sound Classes<br>Softmax Projection"))
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style F fill:#bbf,stroke:#333,stroke-width:2px
 ```
+
+</div>
+
+---
 
 ## Getting Started
 
