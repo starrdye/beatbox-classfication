@@ -1,6 +1,6 @@
 # Beatbox Classification Project
 
-This project focuses on the classification and analysis of beatbox sounds compared to traditional drum hits.
+This project focuses on the classification and analysis of beatbox sounds.
 
 ## Project Structure
 
@@ -8,28 +8,20 @@ The codebase is organized into several phases of analysis, each represented by c
 
 ## Audio Data Structure
 
-The `audio_data` directory is the central location for all audio files used in this project. It is structured to support both participant recordings and extracted drum hits for comparison.
+The `audio_data` directory is the central location for all audio files used in this project. It is structured to support participant recordings across different phases.
 
 ```text
 audio_data/
 ├── 1/                     # Participant 1
 │   ├── Phase 1/           # Individual sound clips (e.g., P1-b-01.wav)
-│   ├── Phase 2/           # Patterns and full recordings
-│   └── Phase 3/           # Realism analysis sounds
+│   └── Phase 2/           # Patterns and full recordings
 ├── 2/                     ... (same structure for participants 2-11)
-└── drums/                 # Professional drum hits (from ENST dataset)
-    ├── bd/                # Bass Drum
-    ├── chh/               # Closed Hi-Hat
-    └── sd/                # Snare Drum
+└── ...
 ```
 
 ### Participant Data
 - **Phase 1**: Contains individual sound clips organized by sound class (e.g., `b` for bass kick, `k` for snare).
 - **Phase 2**: Contains patterns and full recordings used for supervised classification.
-- **Phase 3**: Used for realism analysis and comparison with professional sounds.
-
-### Drum Data
-- **drums/**: Contains professional drum hits extracted from the ENST dataset, categorized into `bd` (bass drum), `chh` (closed hi-hat), and `sd` (snare drum).
 
 ---
 
@@ -78,6 +70,7 @@ graph TD
 ## Getting Started
 
 1. **Audio Data**: Ensure the `audio_data/` directory is populated with the necessary recordings.
-2. **Drum Hits**: If needed, run `extract_drum_hits.py` to populate `audio_data/drums` from the `ENST-drums-dataset-master` (ensure the raw dataset is present locally).
-3. **Classification**: Run `phase2_classification.py` to perform supervised classification using SVM, Random Forest, and CNN models.
-4. **Analysis**: Use `rms_analysis.py` and `phase3_realism_analysis.py` for further signal processing and comparative studies.
+2. **Classification**: Run `phase2_classification.py` to perform supervised classification using SVM, Random Forest, and CNN models.
+3. **Analysis**: Use `rms_analysis.py` for further signal processing and comparative studies.
+
+---
