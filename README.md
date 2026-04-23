@@ -63,14 +63,40 @@ The best-performing model extracts Mel-Spectrogram features through three connec
 
 ```mermaid
 graph TD
-    A["Log Mel-Spectrogram Image (1x64x128)"] --> B{"Conv2D Block 1"}
-    B --> C{"Conv2D Block 2"}
-    C --> D{"Conv2D Block 3"}
-    D --> E("Classifier Head<br>Flatten & Dense layers")
-    E --> F(("Output: 4 Sound Classes<br>Softmax Projection"))
+    Input["Input: Log Mel-Spectrogram (1, 64, 128)"] --> Block1
     
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style F fill:#bbf,stroke:#333,stroke-width:2px
+    subgraph Block1["Conv2D Block 1"]
+        C1["Conv2d (1 to 16, 3x3)"] --> B1["BatchNorm2d"]
+        B1 --> R1["ReLU"]
+        R1 --> P1["MaxPool2d (2x2)"]
+    end
+    
+    Block1 --> Block2
+    
+    subgraph Block2["Conv2D Block 2"]
+        C2["Conv2d (16 to 32, 3x3)"] --> B2["BatchNorm2d"]
+        B2 --> R2["ReLU"]
+        R2 --> P2["MaxPool2d (2x2)"]
+    end
+    
+    Block2 --> Block3
+    
+    subgraph Block3["Conv2D Block 3"]
+        C3["Conv2d (32 to 64, 3x3)"] --> B3["BatchNorm2d"]
+        B3 --> R3["ReLU"]
+        R3 --> P3["AdaptiveAvgPool2d (4x4)"]
+    end
+    
+    Block3 --> Head
+    
+    subgraph Head["Classifier Head"]
+        F1["Flatten"] --> L1["Linear (1024 to 128)"]
+        L1 --> RH1["ReLU"]
+        RH1 --> D1["Dropout (0.5)"]
+        D1 --> L2["Linear (128 to 4)"]
+    end
+    
+    Head --> Output["Output: Softmax (4 Classes)"]
 ```
 
 </div>

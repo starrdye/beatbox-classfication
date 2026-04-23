@@ -8,7 +8,6 @@
 **Supervisor:** Tan Dayang
 **Date:** April 2026
 **Module:** Independent Study Component (ISC)
-**Word Count:** ~4,400 (excluding appendices and references)
 
 ---
 
@@ -477,13 +476,6 @@ graph TD
     
     Head --> Output["Output: Softmax (4 Classes)"]
 ```
-
-An interactive diagram of the Phase 2 CNN architecture is provided at: **[link to be added after deployment]**
-
-The page presents each layer in the CNN as a hoverable block. Hovering over any block displays the input and output tensor shapes, a plain-language description of what the layer computes, and which sound-type distinctions the layer contributes to. Example mel-spectrograms for each of the four sound types are shown at the input node.
-
-
-The chart is implemented in plain HTML and JavaScript (`layer_chart.html` in the project root) and does not require any backend — it can be opened directly in a browser or hosted as a static page.
 
 ---
 
