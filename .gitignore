@@ -25,9 +25,20 @@ dashboard_*.png
 
 # Image files generated for the report
 *.png
+!public/*.png
 
 # Hidden AI output folders
 .claude/
 
 # Archived unrelated and sensitive project files
 archive/
+
+# Raw ENST drums dataset (not used once hits are extracted)
+ENST-drums-dataset-master/
+
+# Word Documents
+*.docx
+
+# Phase 3 files (not included at this moment)
+*phase3*
+audio_data/*/Phase 3/
